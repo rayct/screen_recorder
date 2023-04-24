@@ -1,0 +1,6 @@
+# mac hidden files
+vscode
+.DS_Store
+
+# venv directory
+screen_recorder_venv
