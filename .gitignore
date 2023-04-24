@@ -4,3 +4,6 @@ vscode
 
 # venv directory
 screen_recorder_venv
+
+# video files
+recordings/recording.mp4
