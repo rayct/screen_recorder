@@ -15,6 +15,8 @@ dimension = (w, h)
 fourcc = cv2.VideoWriter_fourcc(*"XVID")
 # VideoWriter -> This class provides C++ API for writing video files or image sequences
 # Constructor parameters-> video filename, video codec, video frame-rate(fps), screen dimensions
+
+# Change these settings to suit your output preferences ie: File Name and Output Directory
 output = cv2.VideoWriter("recordings/recording.mp4", fourcc, 20.0, dimension)
 
 # Access current system time:
