@@ -78,7 +78,7 @@ def start_recording():
 
 # Create tkinter GUI
 root = tk.Tk()
-root.geometry("400x200") # Set dimensions of GUI window
+root.geometry("400x300") # Set dimensions of GUI window
 root.title("Screen Recorder")# Add timer label
 timer_label = tk.Label(root, text="Recording: 0s")
 timer_label.pack()
