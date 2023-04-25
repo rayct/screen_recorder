@@ -1,5 +1,8 @@
-# Version: 1.0.3
-# This code version includes a new function called update_timer that updates the `timer_label
+# Version: 1.0.4
+# In this code, we added a timer_label label widget to the GUI and updated its text in the while loop using the config() method.
+# I also added a root.update() call to update the GUI during the loop.
+# Finally, I added a message box to notify the user when the recording is finished.
+
 import cv2
 import numpy as np
 import pyautogui
@@ -8,90 +11,165 @@ import time
 import tkinter as tk
 from tkinter import messagebox
 
-# Define function to start recording
-def start_recording():
-    # Access screen width:
-    w = GetSystemMetrics(0)
-    # Access screen height:
-    h = GetSystemMetrics(1)
-    # Store screen dimensions within a tuple:
-    dimension = (w, h)
-    # Define codec -> FourCC is a 4-byte code used to specify the video codec
-    fourcc = cv2.VideoWriter_fourcc(*"XVID")
-    # VideoWriter -> This class provides C++ API for writing video files or image sequences
-    # Constructor parameters-> video filename, video codec, video frame-rate(fps), screen dimensions
+# Access screen width:
+w = GetSystemMetrics(0)
+# Access screen height:
+h = GetSystemMetrics(1)
+# Store screen dimensions within a tuple:
+dimension = (w, h)
+# Define codec -> FourCC is a 4-byte code used to specify the video codec
+fourcc = cv2.VideoWriter_fourcc(*"XVID")
+# VideoWriter -> This class provides C++ API for writing video files or image sequences
+# Constructor parameters-> video filename, video codec, video frame-rate(fps), screen dimensions
 
-    # Change these settings to suit your output preferences ie: File Name and Output Directory
-    output = cv2.VideoWriter("recordings/recording.mp4", fourcc, 20.0, dimension)
+# Change these settings to suit your output preferences ie: File Name and Output Directory
+output = cv2.VideoWriter("recordings/recording.mp4", fourcc, 20.0, dimension)
 
-    # Access current system time:
-    now = time.time()
-    # Read screen recording duration via user input:
-    # time() -> Returns the time as a floating point number expressed in seconds
-    duration = int(duration_entry.get())
-    # Buffer time to ensure that the recorded video duration is as specified by user:
-    # This is done because, code must be executed up till line #33, prior to recording initiation.
-    duration += duration
-    # Identify the time at which recording must stop:
-    end_time = now + duration
+# Access current system time:
+now = time.time()
+# Read screen recording duration via user input:
+# time() -> Returns the time as a floating point number expressed in seconds
+duration = int(input('Specify recording duration in seconds: '))
+# Buffer time to ensure that the recorded video duration is as specified by user:
+# This is done because, code must be executed up till line #33, prior to recording initiation.
+duration += duration
+# Identify the time at which recording must stop:
+end_time = now + duration
 
-    # Update timer label every second
-    def update_timer():
-        current_time = time.time()
-        remaining_time = int(end_time - current_time)
-        timer_label.config(text=f"Recording duration: {remaining_time} seconds")
-        if current_time >= end_time:
-            # Stop recording
-            output.release()
-            timer_label.config(text="Screen recording completed")
-            messagebox.showinfo("Success", "Screen recording completed successfully.")
-            return
-        else:
-            root.after(1000, update_timer)
-
-    # Update timer label
-    update_timer()
-
-    while True:
-        # Take a screenshot:
-        # screenshot() -> Returns an Image object
-        img = pyautogui.screenshot()
-        # Import image data into NumPy array:
-        frame = np.array(img)
-        # Use cvtColor() method to convert image from BGR to RGB color format:
-        # This conversion ensures that the recording exactly resembles the content that had been recorded
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        # Write the frame into the file 'recording.mp4':
-        output.write(frame)
-        # Access current system time:
-        current_time = time.time()
-        # Check if it is time to stop recording. If so, break out of while loop.
-        if current_time>end_time:
-            break
-
-    # Release the capture
-    output.release()
-
-# Create tkinter GUI
+# Create GUI
 root = tk.Tk()
-root.geometry("400x200") # Set dimensions of GUI window
 root.title("Screen Recorder")
+root.geometry("300x100")
 
-# Create label and entry for duration input
-duration_label = tk.Label(root, text="Specify recording duration in seconds:")
-duration_label.pack()
-duration_entry = tk.Entry(root)
-duration_entry.pack()
-
-# Create label for timer
-timer_label = tk.Label(root, text="")
+# Add timer label
+timer_label = tk.Label(root, text="Recording: 0s")
 timer_label.pack()
 
-# Create button to start recording
-start_button = tk.Button(root, text="Start Recording", command=start_recording)
-start_button.pack()
+while True:
+    # Take a screenshot:
+    # screenshot() -> Returns an Image object
+    img = pyautogui.screenshot()
+    # Import image data into NumPy array:
+    frame = np.array(img)
+    # Use cvtColor() method to convert image from BGR to RGB color format:
+    # This conversion ensures that the recording exactly resembles the content that had been recorded
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    # Write the frame into the file 'recording.mp4':
+    output.write(frame)
+    # Access current system time:
+    current_time = time.time()
+    # Check if it is time to stop recording. If so, break out of while loop.
+    if current_time > end_time:
+        break
+    # Update timer label
+    elapsed_time = current_time - now
+    timer_label.config(text="Recording: {}s".format(int(elapsed_time)))
+    root.update()
 
-root.mainloop()
+# Release the capture
+output.release()
+
+# Show message box when recording is finished
+messagebox.showinfo("Screen Recorder", "Recording finished!")
+
+# Close the GUI
+root.destroy()
+
+
+# # Version: 1.0.3
+# # This code version includes a new function called update_timer that updates the `timer_label
+# import cv2
+# import numpy as np
+# import pyautogui
+# from win32api import GetSystemMetrics
+# import time
+# import tkinter as tk
+# from tkinter import messagebox
+
+# # Define function to start recording
+# def start_recording():
+#     # Access screen width:
+#     w = GetSystemMetrics(0)
+#     # Access screen height:
+#     h = GetSystemMetrics(1)
+#     # Store screen dimensions within a tuple:
+#     dimension = (w, h)
+#     # Define codec -> FourCC is a 4-byte code used to specify the video codec
+#     fourcc = cv2.VideoWriter_fourcc(*"XVID")
+#     # VideoWriter -> This class provides C++ API for writing video files or image sequences
+#     # Constructor parameters-> video filename, video codec, video frame-rate(fps), screen dimensions
+
+#     # Change these settings to suit your output preferences ie: File Name and Output Directory
+#     output = cv2.VideoWriter("recordings/recording.mp4", fourcc, 20.0, dimension)
+
+#     # Access current system time:
+#     now = time.time()
+#     # Read screen recording duration via user input:
+#     # time() -> Returns the time as a floating point number expressed in seconds
+#     duration = int(duration_entry.get())
+#     # Buffer time to ensure that the recorded video duration is as specified by user:
+#     # This is done because, code must be executed up till line #33, prior to recording initiation.
+#     duration += duration
+#     # Identify the time at which recording must stop:
+#     end_time = now + duration
+
+#     # Update timer label every second
+#     def update_timer():
+#         current_time = time.time()
+#         remaining_time = int(end_time - current_time)
+#         timer_label.config(text=f"Recording duration: {remaining_time} seconds")
+#         if current_time >= end_time:
+#             # Stop recording
+#             output.release()
+#             timer_label.config(text="Screen recording completed")
+#             messagebox.showinfo("Success", "Screen recording completed successfully.")
+#             return
+#         else:
+#             root.after(1000, update_timer)
+
+#     # Update timer label
+#     update_timer()
+
+#     while True:
+#         # Take a screenshot:
+#         # screenshot() -> Returns an Image object
+#         img = pyautogui.screenshot()
+#         # Import image data into NumPy array:
+#         frame = np.array(img)
+#         # Use cvtColor() method to convert image from BGR to RGB color format:
+#         # This conversion ensures that the recording exactly resembles the content that had been recorded
+#         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+#         # Write the frame into the file 'recording.mp4':
+#         output.write(frame)
+#         # Access current system time:
+#         current_time = time.time()
+#         # Check if it is time to stop recording. If so, break out of while loop.
+#         if current_time>end_time:
+#             break
+
+#     # Release the capture
+#     output.release()
+
+# # Create tkinter GUI
+# root = tk.Tk()
+# root.geometry("400x200") # Set dimensions of GUI window
+# root.title("Screen Recorder")
+
+# # Create label and entry for duration input
+# duration_label = tk.Label(root, text="Specify recording duration in seconds:")
+# duration_label.pack()
+# duration_entry = tk.Entry(root)
+# duration_entry.pack()
+
+# # Create label for timer
+# timer_label = tk.Label(root, text="")
+# timer_label.pack()
+
+# # Create button to start recording
+# start_button = tk.Button(root, text="Start Recording", command=start_recording)
+# start_button.pack()
+
+# root.mainloop()
 
 
 
