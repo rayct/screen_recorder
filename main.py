@@ -50,7 +50,6 @@ def start_recording():
             root.after(1000, update_timer)
 
     # Update timer label
-    update_timer()
 
     while True:
         # Take a screenshot:
@@ -68,7 +67,8 @@ def start_recording():
         # Check if it is time to stop recording. If so, break out of while loop.
         if current_time>end_time:
             break
-        #   Update timer label
+        # Update timer label
+        update_timer()
         elapsed_time = current_time - now
         timer_label.config(text="Recording: {}s".format(int(elapsed_time)))
         root.update()
